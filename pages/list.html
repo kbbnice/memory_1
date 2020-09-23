@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+    <link rel="stylesheet" href="/static/css/index.css">
+    <title>美食列表</title>
+
+</head>
+
+<body class="list-body">
+    <h1><a href="/index.html"><span class="back"><</span></a> 美食列表</h1>
+    <div class="list-box">
+        <div class="filter">
+            <div class="filter-item">时间</div>
+            <div class="filter-item">价格</div>
+            <div class="filter-item">服务</div>
+            <div class="filter-item">口感</div>
+            <div class="filter-item">总分</div>
+        </div>
+        <div id="listWrap" class="list-wrap">
+            <!-- <div class="list-item">
+                <p class="title">海底捞</p>
+                <div class="food-name">菜品</div>
+                <div class="score-list">
+                    <div class="score-item">
+                        美味分：<span class="score">0</span> 分
+                    </div>
+                    <div class="score-item">
+                        服务分：<span class="score">0</span> 分
+                    </div>
+                    <div class="score-item">
+                        价格分：<span class="score">0</span> 分
+                    </div>
+                    <div class="score-item">
+                        总&nbsp;&nbsp;分：<span class="score">0</span> 分
+                    </div>
+                </div>
+            </div> -->
+
+        </div>
+    </div>
+
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static/js/common.js"></script>
+    <script>
+        $(function () {
+
+            // 获取数据：
+            getListData()
+            function getListData() {
+                $.ajax({
+                    type: 'post',
+                    url: urlData + 'fetchList',
+                    dataType: 'json',
+                    success: function (data) {
+                        if (data.code == 200) {
+                            var str = ''
+                            if (data.data.length > 0) {
+                                for (var i = 0; i < data.data.length; i++) {
+                                    var item = data.data[i]
+                                    console.log(item)
+                                    str += `
+                                    <div class="list-item">
+                                        <p class="title">${item.shop_name}</p>
+                                        <div class="food-name">${item.food_name}</div>
+                                        <div class="score-list">
+                                            <div class="score-item">
+                                                美味分：<span class="score">${item.score_food}</span> 分
+                                            </div>
+                                            <div class="score-item">
+                                                服务分：<span class="score">${item.score_server}</span> 分
+                                            </div>
+                                            <div class="score-item">
+                                                价格分：<span class="score">${item.score_price}</span> 分
+                                            </div>
+                                            <div class="score-item">
+                                                总&nbsp;&nbsp;分：<span class="score">${item.total_score}</span> 分
+                                            </div>
+                                        </div>
+                                    </div>`
+
+                                }
+                            } else {
+                                str = '暂无数据~'
+                            }
+                            $('#listWrap').html(str)
+                        } else {
+                            alert('小可爱又写bug了~')
+                        }
+
+                    },
+                    error: function (error) {
+                        console.log(error)
+                    }
+                })
+            }
+        })
+    </script>
+</body>
+
+</html>

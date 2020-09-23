@@ -1,13 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/index.css">
-    <title></title>
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+    <link rel="stylesheet" href="/static/css/index.css">
+    <title>我们的美食鉴定书</title>
 
 </head>
-<body>
-    
+
+<body class="home-body">
+    <div class="">
+        <h1>吃货的美食鉴定</h1>
+
+        <!-- 输入框 -->
+        <div class="info-input">
+            <div class="input-item">
+                <label for="fname"><span class="label">店名：</span><input type="text" id="fname"></label>
+            </div>
+            <div class="input-item">
+                <label for="food"><span class="label">菜品：</span><input type="text" id="food"></label>
+            </div>
+            <div class="input-item">
+                <label for="address"><span class="label">地址：</span><input type="text" id="address"></label>
+            </div>
+        </div>
+
+        <!-- 评分栏 -->
+        <div class="star-box">
+            <p  id="scoreFood" class="star-item-title">它有多好次：<span class="score">0</span>分</p>
+            <div class="star-item">
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+            </div>
+        </div>
+        <div class="star-box">
+            <p id="scoreServer" class="star-item-title">服务态度：<span class="score">0</span>分</p>
+            <div class="star-item">
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+            </div>
+        </div>
+        <div class="star-box">
+            <p id="scorePrice" class="star-item-title">便宜吗便宜吗？<span class="score">0</span>分</p>
+            <div class="star-item">
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+                <span class="icon-memory icon-memory-star"></span>
+            </div>
+        </div>
+        <div class="total">总分：<span class="total-score">0</span>分</div>
+        <div class="btns"><button class="submit-btn">提 交</button><a href="./pages/list.html"><button class="list-btn">查看列表</button></a></div>
+    </div>
+
+    <script src="/static/js/jquery.min.js"></script>
+    <script src="/static//js/common.js"></script>
+    <script>
+        $(function () {
+            var starItem = $('.star-item')
+            var index = -1
+            var colorList = [
+                '#ffff2a',
+                '#fff52a',
+                '#ffee2a',
+                '#ffe52a',
+                '#ffdd2a',
+                '#ffd52a',
+                '#ffcc2a',
+                '#ffc52a',
+                '#ffbb2a',
+                '#ffb52a',
+                '#ffaa2a',
+                '#ffa52a',
+            ]
+            colorList = colorList.reverse()
+            starItem.click(function (e) {
+                if ($(e.target).hasClass('icon-memory-star')) {
+                    index = $(e.target).index() + 1
+                    var stars = $(this).children('.icon-memory-star')
+                    stars.css('color', '#d0d0d0')
+                    stars.removeClass('active')
+                    for (var i = 0; i < index; i++) {
+                        $(this).children('.icon-memory-star').eq(i).css('color', colorList[i])
+                        $(this).children('.icon-memory-star').addClass('active')
+                    }
+                    $(this).siblings('.star-item-title').find('.score').html(index)
+                    countTotal()
+                }
+            })
+
+            // 总分计算
+            function countTotal() {
+                var totalScore = 0
+                $('.score').each(function () {
+                    $(this).html()
+                    totalScore += parseInt($(this).html())
+                })
+                $('.total-score').html(totalScore)
+            }
+
+            function submit() {
+                // 提交表单：
+                var isFinish = true
+                $('input').each(function () {
+                    if (!$(this).val()) {
+                        console.log(22)
+                        isFinish = false
+                        return false
+                    }
+                })
+
+                $('.star-item').each(function () {
+                    if ($(this).children('.icon-memory-star.active').length === 0) {
+                        console.log(1)
+                        isFinish = false
+                        return false
+                    }
+                })
+
+                if (isFinish) {
+                    $.ajax({
+                        type: 'post',
+                        url: urlData + 'saveData',
+                        dataType: 'json',
+                        data: {
+                            shop_name: $('#fname').val(),
+                            food_name: $('#food').val(),
+                            address: $('#address').val(),
+                            score_food: parseInt($('#scoreFood .score').html()),
+                            score_server: parseInt($('#scoreServer .score').html()),
+                            score_price: parseInt($('#scorePrice .score').html()),
+                            total_score: parseInt($('.total-score').html()),
+                        },
+                        success: function (data) {
+                            if(data.code == 200) {
+                                alert('提交成功~')
+                                window.location.href = './pages/list.html'
+                            } else {
+                                alert('小可爱又写 bug 了~')
+                            }
+                         }
+                    })
+                } else {
+                    alert('数据不完整哦~')
+                }
+            }
+
+            $('.submit-btn').click(function () {
+                submit()
+            })
+
+        })
+    </script>
 </body>
+
 </html>
